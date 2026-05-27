@@ -35,3 +35,10 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error("SYSTEM_ERROR: Form module not found! Verify section ID and form tags.");
     }
 });
+
+AOS.init({
+    duration: 2000,     // Durasi animasi (800 milidetik = 0.8 detik)
+    once: true,        // Animasi hanya jalan sekali saat discroll ke bawah
+    offset: 100,       // Jarak scroll sebelum elemen muncul
+    easing: 'ease-in-out'
+});
