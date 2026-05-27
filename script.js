@@ -1,24 +1,37 @@
+console.log("SYSTEM_STATUS: script.js successfully initialized.");
+
 document.addEventListener('DOMContentLoaded', function() {
-    const contactForm = document.getElementById('contactForm');
+    console.log("SYSTEM_STATUS: DOM tree is ready.");
+    
+    const contactForm = document.querySelector('#contact form');
     
     if (contactForm) {
+        console.log("SYSTEM_STATUS: Transmission form located.");
+        
         contactForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const visitorName = document.getElementById('name').value.trim();
+            event.preventDefault(); 
+            
+            console.log("SYSTEM_STATUS: Transmit button engaged! Intercepting data...");
+            
+            const nameInput = document.getElementById('name');
+            const visitorName = nameInput ? nameInput.value : 'Operator';
+            
             const formContainer = contactForm.parentElement;
-
-        formContainer.innerHTML = `
-            <div class="text-center fade-in py-4">
-            <h3 class="text-success mb-3">TRANSMISSION_SUCCESS_</h3>
-            <p class="text-white-50 mb-4">
-                Data received, Thank You, <strong class="text-warning">{visitorName || 'Operator'}</strong>.<br>
-                Your Message has been encrypted and sent to the MadNeighbour secure server.
-            </p>
-            <button class="btn btn-outline-info retro-btn mt-3" onclick="location.reload()">
-                SEND ANOTHER TRANSMISSION
-            </button>
-            </div>
-         `;
+            
+            formContainer.innerHTML = `
+                <div class="text-center fade-in py-4">
+                    <h3 class="text-success blink-text mb-3">> TRANSMISSION_SUCCESS_</h3>
+                    <p class="text-white-50 mb-4">
+                        Data received. Thank you, <strong class="text-warning">${visitorName || 'Operator'}</strong>.<br>
+                        Your message has been encrypted and sent to the MadNeighbour secure server.
+                    </p>
+                    <button class="btn btn-outline-info retro-btn mt-3" onclick="location.reload()">
+                        SEND_ANOTHER_FILE
+                    </button>
+                </div>
+            `;
         });
+    } else {
+        console.error("SYSTEM_ERROR: Form module not found! Verify section ID and form tags.");
     }
 });
