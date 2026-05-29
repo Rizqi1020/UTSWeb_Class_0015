@@ -3,9 +3,21 @@ html {
 }
 
 body {
-    font-family: VT323, monospace;
+    font-family: 'VT323', monospace;
     background-color: #050505;
+    /* Efek Grid Cyberpunk yang Hidup */
+    background-image: 
+        linear-gradient(rgba(13, 202, 240, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(13, 202, 240, 0.07) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridScroll 5s linear infinite;
     overflow-x: hidden;
+}
+
+/* Animasi untuk menggerakkan grid latar belakang */
+@keyframes gridScroll {
+    0% { background-position: 0 0; }
+    100% { background-position: 40px 40px; }
 }
 
 .crt-overlay {
