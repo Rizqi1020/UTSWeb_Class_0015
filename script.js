@@ -3,6 +3,25 @@ console.log("SYSTEM_STATUS: script.js successfully initialized.");
 document.addEventListener('DOMContentLoaded', function() {
     console.log("SYSTEM_STATUS: DOM tree is ready.");
     
+const themeToggle = document.getElementById('themeToggle');
+
+if (localStorage.getItem('madNeighbourTheme') === 'light') {
+    document.body.classList.add('light-mode');
+    themeToggle.innerHTML = '> NIGHT_MODE';
+}
+
+themeToggle.addEventListener('click', function() {
+    document.body.classList.toggle('light-mode');
+    
+    if (document.body.classList.contains('light-mode')) {
+        localStorage.setItem('madNeighbourTheme', 'light');
+        themeToggle.innerHTML = '> NIGHT_MODE';
+    } else {
+        localStorage.setItem('madNeighbourTheme', 'dark');
+        themeToggle.innerHTML = '> DAY_MODE';
+    }
+});
+
     const contactForm = document.querySelector('#contact form');
     
     if (contactForm) {
@@ -37,8 +56,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 AOS.init({
-    duration: 2000,     // Durasi animasi (800 milidetik = 0.8 detik)
-    once: true,        // Animasi hanya jalan sekali saat discroll ke bawah
-    offset: 100,       // Jarak scroll sebelum elemen muncul
+    duration: 2000, 
+    once: true,
+    offset: 100,
     easing: 'ease-in-out'
 });
