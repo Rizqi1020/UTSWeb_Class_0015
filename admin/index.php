@@ -1,6 +1,5 @@
 <?php
 session_start();
-// Satpam: Admin harus login dan role-nya harus admin
 if (!isset($_SESSION['user_login']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../login.php");
     exit();

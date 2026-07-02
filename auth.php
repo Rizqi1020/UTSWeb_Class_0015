@@ -2,29 +2,14 @@
 session_start();
 require_once 'config/db.php';
 
-$username = $_POST['username'];
+$username = mysqli_real_escape_string($conn, $_POST['username']);
 $password = $_POST['password'];
+$query = mysqli_query($conn, "SELECT * FROM users WHERE username = '$username'");
 
-// Cek apakah data yang dikirim masuk
-if (empty($username) || empty($password)) {
-    die("Username atau password tidak boleh kosong.");
-}
-
-// Lakukan query
-$query = "SELECT * FROM users WHERE username = '$username'";
-$result = mysqli_query($conn, $query);
-
-if (mysqli_num_rows($result) > 0) {
-    $user = mysqli_fetch_assoc($result);
+if (mysqli_num_rows($query) > 0) {
+    $user = mysqli_fetch_assoc($query);
     
-    // DEBUG: Cek isi database
-    echo "Username ditemukan di database!<br>";
-    echo "Password di database: " . $user['password'] . "<br>";
-    echo "Password yang kamu ketik: " . $password . "<br>";
-
-    // Bandingkan
     if ($password == $user['password']) {
-        echo "Password cocok! Sedang mengarahkan... ";
         $_SESSION['user_login'] = true;
         $_SESSION['role'] = $user['role'];
         
@@ -35,9 +20,9 @@ if (mysqli_num_rows($result) > 0) {
         }
         exit();
     } else {
-        echo "<b style='color:red;'>Password SALAH!</b>";
+        echo "<script>alert('Password salah!'); window.location='login.php';</script>";
     }
 } else {
-    echo "<b style='color:red;'>Username TIDAK DITEMUKAN di database!</b>";
+    echo "<script>alert('Username tidak ditemukan!'); window.location='login.php';</script>";
 }
 ?>

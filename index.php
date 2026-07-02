@@ -7,16 +7,12 @@ if (!isset($_SESSION['user_login'])) {
     header("Location: login.php");
     exit();
 }
-
-// 3. Panggil koneksi database
 require_once 'config/db.php';
 
-// 4. Pastikan $conn ada. Jika $conn tidak ditemukan, script akan berhenti di sini
 if (!isset($conn)) {
     die("Koneksi database gagal. Cek file config/db.php kamu.");
 }
 
-// 5. Jalankan Query
 $query = "SELECT * FROM games ORDER BY id DESC";
 $games_result = mysqli_query($conn, $query);
 ?>

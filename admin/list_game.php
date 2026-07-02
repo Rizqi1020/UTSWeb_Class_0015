@@ -1,13 +1,11 @@
 <?php
 session_start();
-// Cek Login & Role
 if (!isset($_SESSION['user_login']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../login.php");
     exit();
 }
 require_once '../config/db.php';
 
-// Ambil data game
 $query = mysqli_query($conn, "SELECT * FROM games ORDER BY id DESC");
 ?>
 <!DOCTYPE html>
