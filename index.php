@@ -1,3 +1,25 @@
+<?php
+// 1. Mulai session (karena kamu tadi minta fitur login user)
+session_start();
+
+// 2. Cek apakah user sudah login
+if (!isset($_SESSION['user_login'])) {
+    header("Location: login.php");
+    exit();
+}
+
+// 3. Panggil koneksi database
+require_once 'config/db.php';
+
+// 4. Pastikan $conn ada. Jika $conn tidak ditemukan, script akan berhenti di sini
+if (!isset($conn)) {
+    die("Koneksi database gagal. Cek file config/db.php kamu.");
+}
+
+// 5. Jalankan Query
+$query = "SELECT * FROM games ORDER BY id DESC";
+$games_result = mysqli_query($conn, $query);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,6 +51,8 @@
                     <li class="nav-item"><a class="nav-link text-warning" href="#games">GAMES</a></li>
                     <li class="nav-item"><a class="nav-link text-warning" href="#contact">CONTACT</a></li>
                     <button id="themeToggle" class="btn btn-outline-warning retro-btn ms-2 px-3">> DAY_MODE</button>
+
+                    <a href="logout.php" class="btn btn-outline-danger retro-btn">LOGOUT</a>
                 </ul>
             </div>
         </div>
@@ -43,19 +67,18 @@
     </section>
 
     <section id="about" class="py-5 border-bottom border-secondary">
-        
         <div class="container py-5">
             <div class="row align-items-center">
-                <div class="col-md-8 mb-4 mb-md-0"data-aos="fade-right">
+                <div class="col-md-8 mb-4 mb-md-0" data-aos="fade-right">
                     <h2 class="display-4 mb-4" style="color: #0dcaf0;">About Us</h2>
                     <p class="fs-4 text-white-50 lh-base">MadNeighbour Games was founded in a small garage with one simple goal:
                         <span class="text-white">bringing delightful chaos right into the palm of your hands.</span>
                     </p>
                     <p class="fs-5 text-white-50">
-                            We are an indie game studio focused on developing casual mobile games, relaxing puzzles, and lighthearted simulations. We believe that every line of code we write should make players smile (or laugh in frustration when they lose).
+                        We are an indie game studio focused on developing casual mobile games, relaxing puzzles, and lighthearted simulations. We believe that every line of code we write should make players smile (or laugh in frustration when they lose).
                     </p>
                 </div>
-                <div class="col-md-4"data-aos="fade-left">
+                <div class="col-md-4" data-aos="fade-left">
                     <div class="p-4 border border-secondary" style="background-color: #111">
                         <h3 class="text-warning mb-3">STATUS: ONLINE</h3>
                         <p class="mb-1 text-white-50">ESTABILISHED: 2026</p>
@@ -85,7 +108,7 @@
 
     <section id="features" class="py-5 border-bottom border-secondary">
         <div class="container py-5">
-            <h2 class="display-5 mb-5" text-center style="color: #0dcaf0;">FEATURES</h2>
+            <h2 class="display-5 mb-5 text-center" style="color: #0dcaf0;">FEATURES</h2>
             <div class="row g-4 text-center">
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
                     <div class="p-4 border border-secondary bg-black h-100 retro-card" style="transition: transform 0.2;">
@@ -109,55 +132,37 @@
         </div>
     </section>
 
-        <section id="games" class="py-5 border-bottom border-secondary">
+    <!-- SECTION GAMES (DYNAMIC) -->
+    <section id="games" class="py-5 border-bottom border-secondary">
         <div class="container py-5">
             <h2 class="display-5 mb-5 text-center" style="color: #0dcaf0;">OUR GAMES</h2>
             <div class="row g-4">
-                
-                <div class="col-md-4">
-                    <div class="p-3 border border-secondary bg-black retro-card h-100">
-                        <img src="https://cdn1.epicgames.com/b671fbc7be424e888c9346a9a6d3d9db/offer/Celeste%20-%20landscape%20offer%20image-2560x1440-0b9b94fd493d817704ecfdf4c704989a.jpg" class="img-fluid mb-3 border border-secondary w-100" style="height: 200px; object-fit: cover;" alt="Celeste Game">
-                        
-                        <h4 class="text-warning">CELESTE</h4>
-                        <p class="text-white-50">Help Madeline survive her inner demons on her journey to the top of Celeste Mountain.</p>
-                        <span class="badge bg-secondary mb-3 rounded-0">PLATFORMER</span>
-                        <a href="https://store.steampowered.com/app/504230/Celeste/" class="btn btn-sm btn-outline-info retro-btn w-100">VIEW ON STEAM</a>
+                <?php if (mysqli_num_rows($games_result) > 0): ?>
+                    <?php while ($game = mysqli_fetch_assoc($games_result)): ?>
+                        <div class="col-md-4">
+                            <div class="p-3 border border-secondary bg-black retro-card h-100">
+                                <img src="<?php echo htmlspecialchars($game['image_url']); ?>" class="img-fluid mb-3 border border-secondary w-100" style="height: 200px; object-fit: cover;" alt="<?php echo htmlspecialchars($game['title']); ?>">
+                                <h4 class="text-warning"><?php echo htmlspecialchars(strtoupper($game['title'])); ?></h4>
+                                <p class="text-white-50"><?php echo htmlspecialchars($game['description']); ?></p>
+                                <a href="<?php echo htmlspecialchars($game['steam_link']); ?>" target="_blank" class="btn btn-sm btn-outline-info retro-btn w-100">VIEW ON STEAM</a>
+                            </div>
+                        </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <div class="col-12 text-center text-warning">
+                        <h3>> NO_GAMES_IN_DATABASE_</h3>
                     </div>
-                </div>
-                
-                <div class="col-md-4">
-                    <div class="p-3 border border-secondary bg-black retro-card h-100">
-                        <img src="https://imgs.crazygames.com/games/space-invaders/cover_16x9-1714708168967.png?metadata=none&quality=100&width=1200&height=630&fit=crop" class="img-fluid mb-3 border border-secondary w-100" style="height: 200px; object-fit: cover;" alt="Space Invaders Game">
-                        
-                        <h4 class="text-warning">SPACE INVADERS</h4>
-                        <p class="text-white-50">The absolute arcade classic. Defend the earth from waves of descending aliens!</p>
-                        <span class="badge bg-secondary mb-3 rounded-0">ARCADE</span>
-                        <a href="https://store.steampowered.com/app/744050/Space_Invaders_Extreme//" class="btn btn-sm btn-outline-info retro-btn w-100">VIEW ON STEAM</a>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="p-3 border border-secondary bg-black retro-card h-100">
-                        <img src="https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/413150/capsule_616x353.jpg?t=1754692865" class="img-fluid mb-3 border border-secondary w-100" style="height: 200px; object-fit: cover;" alt="Stardew Valley Game">
-                        
-                        <h4 class="text-warning">STARDEW VALLEY</h4>
-                        <p class="text-white-50">Inherit your grandfather's old farm plot. Armed with hand-me-down tools and a few coins.</p>
-                        <span class="badge bg-secondary mb-3 rounded-0">SIMULATION</span>
-                        <a href="https://store.steampowered.com/app/413150/Stardew_Valley/" class="btn btn-sm btn-outline-info retro-btn w-100">VIEW ON STEAM</a>
-                    </div>
-                </div>
-
-            </div>
+                <?php endif; ?>
             </div>
             <div class="text-center mt-4">
                 <a href="https://store.steampowered.com/" class="btn btn-outline-info retro-btn">VIEW ALL GAMES</a>
             </div>
+        </div>
     </section>
 
     <section id="reviews" class="py-5 border-bottom border-secondary">
         <div class="container py-5 text-center">
             <h2 class="display-5 mb-5" style="color: #0dcaf0;">TRANSMISSION LOGS: REVIEWS</h2>
-
             <div class="row justify-content-center mb-5">
                 <div class="col-md-8 text-center">
                     <div class="p-4 border border-warning bg-black retro-card">
@@ -173,7 +178,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="p-4 border border-secondary bg-black retro-card h-100">
@@ -194,11 +198,9 @@
     <section id="faq" class="py-5 border-top border-secondary">
         <div class="container py-5">
             <h2 class="display-5 mb-5 text-center" style="color: #0dcaf0;">TRANSMISSION LOGS (FAQ)</h2>
-            
             <div class="row justify-content-center">
                 <div class="col-md-8" data-aos="zoom-in">
                     <div class="accordion accordion-flush retro-card border border-secondary" id="accordionFAQ">
-                        
                         <div class="accordion-item bg-black border-bottom border-secondary">
                             <h2 class="accordion-header" id="headingOne">
                                 <button class="accordion-button collapsed bg-black text-warning shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" style="font-family: 'VT323', monospace; font-size: 1.3rem;">
@@ -211,7 +213,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="accordion-item bg-black border-bottom border-secondary">
                             <h2 class="accordion-header" id="headingTwo">
                                 <button class="accordion-button collapsed bg-black text-warning shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" style="font-family: 'VT323', monospace; font-size: 1.3rem;">
@@ -224,7 +225,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="accordion-item bg-black">
                             <h2 class="accordion-header" id="headingThree">
                                 <button class="accordion-button collapsed bg-black text-warning shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" style="font-family: 'VT323', monospace; font-size: 1.3rem;">
@@ -237,7 +237,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -282,12 +281,10 @@
         <div class="container py-5">
             <h2 class="display-5 mb-5 text-center" style="color: #0dcaf0;">CONTACT US</h2>
             <div class="row g-4 justify-content-center">
-                
                 <div class="col-md-4">
                     <div class="p-4 border border-secondary bg-black retro-card h-100">
                         <h4 class="text-warning mb-4">DIRECT</h4>
                         <p class="text-white-50 mb-4">Prefer sending a direct transmission? Reach out to our main channel:</p>
-                        
                         <div class="mt-4">
                             <p class="mb-2"><strong class="text-info">EMAIL:</strong><br> madneighbourgames@gmail.com</p>
                             <p class="mb-2"><strong class="text-info">PHONE:</strong><br> +62 8124 5678 910</p>
@@ -295,7 +292,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-md-8">
                     <div class="p-4 border border-secondary bg-black retro-card">
                         <form>
@@ -319,18 +315,16 @@
                         </form>
                     </div>
                 </div>
-
             </div>
         </div>
     </section>
 
-</body>
     <footer class="py-4 border-top border-secondary text-center mt-5">
         <div class="mb-3" style="font-family: 'VT323', monospace; font-size: 1.2rem;">
-                <a href="#" class="text-info text-decoration-none mx-2">[ INSTAGRAM ]</a>
-                <a href="#" class="text-info text-decoration-none mx-2">[ TWITTER ]</a>
-                <a href="#" class="text-info text-decoration-none mx-2">[ GITHUB ]</a>
-            </div>
+            <a href="#" class="text-info text-decoration-none mx-2">[ INSTAGRAM ]</a>
+            <a href="#" class="text-info text-decoration-none mx-2">[ TWITTER ]</a>
+            <a href="#" class="text-info text-decoration-none mx-2">[ GITHUB ]</a>
+        </div>
         <div class="container">
             <p class="mb-0 text-white-50 blink-text" style="font-size: 0.9rem;">
                 &copy; 2026 MadNeighbour Games.<br>
@@ -342,4 +336,5 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
+</body>
 </html>
